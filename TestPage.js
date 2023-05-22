@@ -9,6 +9,7 @@ import {
 import Dropdown from "./Dropdown";
 import PageMenu from "./PageMenu";
 import Calendar from "./Calendar";
+import BetterCalendar from "./BetterCalendar";
 
 export default function TestPage() {
   const [selectedType, setSelectedType] = useState("");
@@ -47,7 +48,7 @@ export default function TestPage() {
       <Text>What are we writing today?</Text>
       <Button title="Save Poem" onPress={()=>{storeValue(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`, poem)}} />
       <Button title="Read Poem" onPress={()=>{getValue(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`)}} />
-      <Calendar/>
+      <BetterCalendar/>
       <Dropdown
         options={options}
         selectedValue={selectedType}

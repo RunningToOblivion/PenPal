@@ -7,11 +7,14 @@ import {
   Modal,
   FlatList,
   TouchableWithoutFeedback,
+  useColorScheme,
 } from "react-native";
 
 const Dropdown = ({ options, selectedValue, onValueChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOptionsHeight, setDropdownOptionsHeight] = useState(null);
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
 
   useEffect(() => {
     if (isOpen) {
@@ -28,6 +31,12 @@ const Dropdown = ({ options, selectedValue, onValueChange }) => {
   const handleCloseModal = () => {
     setIsOpen(false);
   };
+  const containerStyle = isDarkMode
+    ? styles.containerDark
+    : styles.containerLight;
+  const textStyle = isDarkMode ? styles.textDark : styles.textLight;
+  const dropdownStyle = isDarkMode ? styles.dropdownDark : styles.dropdownLight;
+  const inputStyle = isDarkMode ? styles.inputDark : styles.inputLight;
 
   const renderItem = ({ item }) => {
     const { style, rules } = item;
@@ -43,7 +52,7 @@ const Dropdown = ({ options, selectedValue, onValueChange }) => {
   };
 
   return (
-    <View style={styles.dropdown}>
+    <View style={[styles.dropdown,isDarkMode?styles.dropdownDark:styles.dropdownLight]}>
       <TouchableOpacity
         style={styles.dropdownHeader}
         onPress={() => setIsOpen(true)}
@@ -77,6 +86,8 @@ const styles = StyleSheet.create({
   dropdown: {
     width: "80%",
     position: "relative",
+    borderWidth: 1,
+    borderRadius: 8
   },
   dropdownHeader: {
     borderWidth: 1,
@@ -110,6 +121,51 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: "gray",
   },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  containerLight: {
+    backgroundColor: "#FFFFFF", // Light mode background color
+  },
+  containerDark: {
+    backgroundColor: "#000000", // Dark mode background color
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 16,
+  },
+  textLight: {
+    color: "#000000", // Light mode text color
+  },
+  textDark: {
+    color: "#FFFFFF", // Dark mode text color
+  },
+  input: {
+    width: "80%",
+    height: 200,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 8,
+    marginTop: 16, // Adjust the margin to create space between the dropdown and the text input
+  },
+  inputLight: {
+    borderColor: "#000000", // Light mode input border color
+    color: "#000000", // Light mode input text color
+  },
+  inputDark: {
+    borderColor: "#FFFFFF", // Dark mode input border color
+    color: "#FFFFFF", // Dark mode input text color
+  },
+  dropdownDark: {
+    borderColor: "white",
+    color:"white",
+  },
+  dropdownLight: {
+    borderColor: "black",
+    color:"black",
+  }
 });
 
 export default Dropdown;

@@ -12,22 +12,49 @@ import {
   Keyboard,
 } from "react-native";
 import Dropdown from "./Dropdown";
-import PageMenu from './PageMenu';
+import PageMenu from "./PageMenu";
 import PoemPage from "./PoemPage";
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
 import TestPage from "./TestPage";
+import CalendarPage from "./CalendarPage";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  let date = new Date();
+  let day =
+    date.getDate() < 10
+      ? "0" + date.getDate().toString()
+      : date.getDate().toString();
+  let month =
+    date.getMonth() < 10
+      ? "0" + (date.getMonth()+1).toString()
+      : (date.getMonth()+1).toString();
+  let year = date.getFullYear().toString();
+  let formatted_date = year + "-" + month + "-" + day;
+  console.log(formatted_date)
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Test">
-        <Stack.Screen name="Home" component={PoemPage} />
-        <Stack.Screen name="Test" component={TestPage}/>
+      <Stack.Navigator
+        initialRouteName="Test"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen
+          name="Home"
+          component={PoemPage}
+          initialParams={{ poem_date: formatted_date, writable: true }}
+        />
+        <Stack.Screen
+          name="Test"
+          component={TestPage}
+          initialParams={{ poem_date: formatted_date, writable: true }}
+        />
+        <Stack.Screen name="Calendar" component={CalendarPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

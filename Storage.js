@@ -16,9 +16,11 @@ export const getValue = async (key,value) => {
     if (value !== null) {
       // Value exists, do something with it
       console.log("Stored value:", value);
+      return value
     } else {
       // Value doesn't exist
       console.log("No stored value found");
+      return 0
     }
   } catch (error) {
     console.log("Error retrieving value:", error);

@@ -9,6 +9,11 @@ import {
   TouchableWithoutFeedback,
   useColorScheme,
 } from "react-native";
+import { useFonts, Inconsolata_400Regular } from '@expo-google-fonts/inconsolata';
+import {
+  Roboto_400Regular,
+} from "@expo-google-fonts/roboto";
+import { Lora_400Regular } from "@expo-google-fonts/lora";
 
 const Dropdown = ({ options, selectedValue, onValueChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +27,14 @@ const Dropdown = ({ options, selectedValue, onValueChange }) => {
       setDropdownOptionsHeight(optionsContainerHeight);
     }
   }, [isOpen, options]);
+
+  let [fontsLoaded] = useFonts({
+    Inconsolata_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const handleOptionPress = (value) => {
     setIsOpen(false);
@@ -87,7 +100,8 @@ const styles = StyleSheet.create({
     width: "80%",
     position: "relative",
     borderWidth: 1,
-    borderRadius: 8
+    borderRadius: 8,
+    borderColor:"#f9e2af"
   },
   dropdownHeader: {
     borderWidth: 1,
@@ -97,6 +111,8 @@ const styles = StyleSheet.create({
   },
   dropdownHeaderText: {
     fontSize: 16,
+    color:"#cdd6f4",
+    fontFamily:"Roboto_400Regular"
   },
   modalContainer: {
     flex: 1,
@@ -105,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   dropdownOptionsContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#1e1e2e",
     borderRadius: 8,
     padding: 8,
   },
@@ -115,11 +131,12 @@ const styles = StyleSheet.create({
   },
   dropdownOptionText: {
     fontSize: 16,
+    color:"#cdd6f4"
   },
   dropdownOptionRules: {
     fontSize: 12,
     marginTop: 4,
-    color: "gray",
+    color: "#bac2de",
   },
   container: {
     flex: 1,
@@ -159,12 +176,12 @@ const styles = StyleSheet.create({
     color: "#FFFFFF", // Dark mode input text color
   },
   dropdownDark: {
-    borderColor: "white",
-    color:"white",
+    borderColor: "#cdd6f4",
+    color:"#CBA328",
   },
   dropdownLight: {
-    borderColor: "black",
-    color:"black",
+    borderColor: "#cdd6f4",
+    color:"#cdd6f4",
   }
 });
 

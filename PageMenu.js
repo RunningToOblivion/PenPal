@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
-import { Button, Modal, View, Text, TouchableOpacity,StyleSheet,useColorScheme} from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import React, { useState } from "react";
+import {
+  Button,
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  useColorScheme,
+} from "react-native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const styles = StyleSheet.create({
   dropdown: {
@@ -78,7 +88,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MenuItem = () => {
+const MenuItem = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
@@ -92,22 +102,37 @@ const MenuItem = () => {
   };
 
   const containerStyle = isDarkMode
-  ? styles.containerDark
-  : styles.containerLight;
+    ? styles.containerDark
+    : styles.containerLight;
   const textStyle = isDarkMode ? styles.textDark : styles.textLight;
   const dropdownStyle = isDarkMode ? styles.dropdownDark : styles.dropdownLight;
   const inputStyle = isDarkMode ? styles.inputDark : styles.inputLight;
 
   return (
-    <View>
+    <View style={{marginRight:"auto"}}>
       <TouchableOpacity onPress={openModal}>
-        <FontAwesome name="bars" size={30} color={isDarkMode?"#fff":"#000"} />
+        <FontAwesome
+          name="bars"
+          size={30}
+          color="#cdd6f4"
+        />
       </TouchableOpacity>
 
       <Modal visible={modalVisible} onRequestClose={closeModal}>
-        <View>
-          <Text>Menu</Text>
-          {/* Add buttons for different pages */}
+        <View style={{flex:1,flexDirection:"column",alignItems:"center",justifyContent:"center",backgroundColor:"#1e1e2e",gap:10}}>
+          <Text style={{color:"#cdd6f4",fontSize:40}}>Menu</Text>
+          <Button
+            title="Go to Calendar"
+            onPress={function () {closeModal();props.navigation.navigate("Calendar")}}
+            style={{flex:1}}
+            color="#fab387"
+          />
+          <Button
+            title="Go to Home"
+            onPress={function () {closeModal();props.navigation.navigate("Test")}}
+            style={{flex:1,width:"20%"}}
+            color="#fab387"
+          />
           {/* Each button onPress should navigate to a specific page */}
           {/* You can use navigation libraries like react-navigation or react-native-navigation */}
         </View>

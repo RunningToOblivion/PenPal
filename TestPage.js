@@ -4,23 +4,55 @@ import {
   View,
   Text,
   TextInput,
-  Button
+  Button,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import Dropdown from "./Dropdown";
 import PageMenu from "./PageMenu";
-import Calendar from "./Calendar";
-import BetterCalendar from "./BetterCalendar";
+import ModalInput from "./ModalInput";
+import { useFonts, Inconsolata_400Regular } from '@expo-google-fonts/inconsolata';
+import {
+  Roboto_400Regular, Roboto_300Light
+} from "@expo-google-fonts/roboto";
+import { Lora_400Regular } from "@expo-google-fonts/lora";
 
-export default function TestPage() {
+export default function TestPage({ route, navigation }) {
+  const { poem_date, writable } = route.params;
   const [selectedType, setSelectedType] = useState("");
   const [poem, setPoem] = useState("");
+  const [modalActive, setModal] = useState("");
 
   useEffect(() => {
-    // Fetch initial settings or use a default type and poem
-    // Here, you can load the default type and poem from storage or an API if needed
     setSelectedType("Sonnet");
-    setPoem("");
+    const getPoem = async () => {
+      const poem = await getValue(poem_date);
+      return poem === 0 ? "" : poem;
+    };
+
+    const fetchPoem = async () => {
+      const poem = await getPoem();
+      setPoem(poem);
+    };
+
+    fetchPoem();
   }, []);
+
+  useEffect(() => {
+    console.log(poem);
+  }, [poem]);
+
+  let [fontsLoaded] = useFonts({
+    Inconsolata_400Regular,
+    Roboto_300Light,
+    Roboto_400Regular
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const handleTypeChange = (value) => {
     setSelectedType(value);
@@ -43,22 +75,56 @@ export default function TestPage() {
     // Add more options with their corresponding style and rules
   ];
   return (
-    <View>
-      <PageMenu />
-      <Text>What are we writing today?</Text>
-      <Button title="Save Poem" onPress={()=>{storeValue(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`, poem)}} />
-      <Button title="Read Poem" onPress={()=>{getValue(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`)}} />
-      <BetterCalendar/>
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "column",
+        padding: 20,
+        alignItems: "center",
+        gap:20,
+        backgroundColor:"#1e1e2e"
+      }}
+    >
+      <View style={{alignSelf:"flex-start"}}><PageMenu navigation={navigation}/></View>
+      <Text style={{fontSize:30,fontFamily:"Lora_400Regular",color:"#cdd6f4"}}>What are we writing today?</Text>
       <Dropdown
         options={options}
         selectedValue={selectedType}
         onValueChange={setSelectedType}
       />
-      <TextInput
-        multiline
-        value={poem}
-        onChangeText={setPoem}
-        placeholder="Write your poem here..."
+      <ModalInput
+        isOpen={modalActive}
+        poem={poem}
+        updatePoem={setPoem}
+        onClose={() => setModal(false)}
+      />
+      <TouchableWithoutFeedback
+        onPress={() => {
+          if (writable == true) {
+            setModal(true);
+          }
+        }}
+      >
+        <Text style={{fontSize:19,borderColor:"#cdd6f4",borderWidth:1,padding:10,width:"80%",height:"60%",borderRadius:10,fontFamily:"Roboto_300Thin",color:"#cdd6f4"}}>{poem == "" ? "Write here" : poem}</Text>
+      </TouchableWithoutFeedback>
+      <Button
+        title="Save Poem"
+        onPress={() => {
+          storeValue(
+            `${new Date().getFullYear()}-${
+              new Date().getMonth() < 10
+                ? "0" + (new Date().getMonth() + 1)
+                : new Date().getMonth() + 1
+            }-${
+              new Date().getDate() < 10
+                ? "0" + new Date().getDate()
+                : new Date().getDate()
+            }`,
+            poem
+          );
+          console.log(poem);
+        }}
+       color={"#fab387"}
       />
     </View>
   );

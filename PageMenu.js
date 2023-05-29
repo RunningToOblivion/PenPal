@@ -9,8 +9,6 @@ import {
   useColorScheme,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const styles = StyleSheet.create({
   dropdown: {

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Modal,
@@ -21,7 +21,8 @@ import { Lora_400Regular } from "@expo-google-fonts/lora";
 const ModalInput = ({ isOpen, onClose, poem, updatePoem }) => {
   const [inputValue, setInputValue] = useState(poem);
   const inputRef = useRef(null)
-
+  console.log(poem)
+  console.log("INPUT_VALUE:"+inputValue)
   const handleClose = () => {
     updatePoem(inputValue);
     onClose();
@@ -38,25 +39,22 @@ const ModalInput = ({ isOpen, onClose, poem, updatePoem }) => {
   return (
     <Modal visible={isOpen} animationType="slide" transparent>
       <View style={styles.modalContainer}>
-        <KeyboardAvoidingView style={styles.modalContent}>
+        <KeyboardAvoidingView style={styles.modalContent} behavior="padding">
           <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
           <TextInput
-          ref={inputRef}
+            ref={inputRef}
             style={styles.input}
             multiline
-            value={inputValue}
-            onChangeText={setInputValue}
+            value={poem}
+            onChangeText={(a)=>{setInputValue(a);updatePoem(a)}}
             scrollEnabled={true}
-            onFocus={function () {
-              this.style.maxHeight = "60%";
-            }}
           />
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView> 
       </View>
     </Modal>
-  );
+  ); //Main Problem here : on mobile, i need to resize the modal so that when keyboard is up i have it at 60% height. then put it back at 100%
 };
 
 const styles = StyleSheet.create({

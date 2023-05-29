@@ -1,76 +1,56 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect, useRef } from "react";
+import { storeValue, getValue } from "./Storage";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
-  StyleSheet,
-  useColorScheme,
-  TouchableOpacity,
+  Button,
   TouchableWithoutFeedback,
-  ScrollView,
-  Keyboard,
-  Button
 } from "react-native";
 import Dropdown from "./Dropdown";
 import PageMenu from "./PageMenu";
-import { storeValue,getValue } from "./Storage";
+import ModalInput from "./ModalInput";
+import { useFonts, Inconsolata_400Regular } from '@expo-google-fonts/inconsolata';
+import {
+  Roboto_400Regular, Roboto_300Light
+} from "@expo-google-fonts/roboto";
+import { Lora_400Regular } from "@expo-google-fonts/lora";
 
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    direction: "vertical",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  containerLight: {
-    backgroundColor: "#FFFFFF", // Light mode background color
-  },
-  containerDark: {
-    backgroundColor: "#000000", // Dark mode background color
-  },
-  text: {
-    fontSize: 20,
-    marginBottom: 16,
-  },
-  textLight: {
-    color: "#000000", // Light mode text color
-  },
-  textDark: {
-    color: "#FFFFFF", // Dark mode text color
-  },
-  input: {
-    width: "80%",
-    height: 200,
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 8,
-    marginTop: 16, // Adjust the margin to create space between the dropdown and the text input
-  },
-  inputLight: {
-    borderColor: "#000000", // Light mode input border color
-    color: "#000000", // Light mode input text color
-  },
-  inputDark: {
-    borderColor: "#FFFFFF", // Dark mode input border color
-    color: "#FFFFFF", // Dark mode input text color
-  },
-});
-
-export default function PoemPage() {
+export default function TestPage({ route, navigation }) {
+  const { poem_date, writable } = route.params;
   const [selectedType, setSelectedType] = useState("");
   const [poem, setPoem] = useState("");
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === "dark";
-  const textInputRef = useRef(null);
+  const [modalActive, setModal] = useState("");
 
   useEffect(() => {
-    // Fetch initial settings or use a default type and poem
-    // Here, you can load the default type and poem from storage or an API if needed
     setSelectedType("Sonnet");
-    setPoem("");
+    const getPoem = async () => {
+      const poem = await getValue(poem_date);
+      console.log(poem)
+      return poem === 0 ? "" : poem;
+    };
+
+    const fetchPoem = async () => {
+      const poem = await getPoem();
+      setPoem(poem);
+    };
+
+    fetchPoem();
   }, []);
+
+  useEffect(() => {
+    console.log(poem);
+  }, [poem]);
+
+  let [fontsLoaded] = useFonts({
+    Inconsolata_400Regular,
+    Roboto_300Light,
+    Roboto_400Regular,
+    Lora_400Regular
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const handleTypeChange = (value) => {
     setSelectedType(value);
@@ -80,17 +60,6 @@ export default function PoemPage() {
     setPoem(value);
   };
 
-  const handleOutsidePress = () => {
-    if (textInputRef.current) {
-      textInputRef.current.blur();
-    }
-  };
-  const containerStyle = isDarkMode
-    ? styles.containerDark
-    : styles.containerLight;
-  const textStyle = isDarkMode ? styles.textDark : styles.textLight;
-  const dropdownStyle = isDarkMode ? styles.dropdownDark : styles.dropdownLight;
-  const inputStyle = isDarkMode ? styles.inputDark : styles.inputLight;
   const options = [
     {
       style: "Haiku",
@@ -104,25 +73,57 @@ export default function PoemPage() {
     // Add more options with their corresponding style and rules
   ];
   return (
-    <View style={[styles.container, containerStyle]}>
-      <PageMenu style={{ justifySelf: "flex-start", marginBottom: "auto" }} />
-      <Text style={[styles.text, textStyle]}>What are we writing today?</Text>
-      <Button title="Save Poem" onPress={storeValue("poem",poem)} />
-      <Button title="Read Poem" onPress={getValue("poem")} />
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "column",
+        padding: 20,
+        alignItems: "center",
+        gap:20,
+        backgroundColor:"#1e1e2e"
+      }}
+    >
+      <View style={{alignSelf:"flex-start"}}><PageMenu navigation={navigation}/></View>
+      <Text style={{fontSize:30,fontFamily:"Lora_400Regular",color:"#cdd6f4"}}>What are we writing today?</Text>
       <Dropdown
         options={options}
         selectedValue={selectedType}
-        onValueChange={handleTypeChange}
+        onValueChange={setSelectedType}
       />
-      <TextInput
-        style={[styles.input, inputStyle]}
-        multiline
-        ref={textInputRef}
-        value={poem}
-        onChangeText={handlePoemChange}
-        placeholder="Write your poem here..."
+      <ModalInput
+        isOpen={modalActive}
+        poem={poem}
+        updatePoem={setPoem}
+        onClose={() => setModal(false)}
       />
-      
+      <TouchableWithoutFeedback
+        onPress={() => {
+          if (writable == true) {
+            setModal(true);
+          }
+        }}
+      >
+        <Text style={{fontSize:19,borderColor:"#cdd6f4",borderWidth:1,padding:10,width:"80%",height:"60%",borderRadius:10,fontFamily:"Roboto_300Light",color:"#cdd6f4"}}>{poem == "" ? "Start writing" : poem}</Text>
+      </TouchableWithoutFeedback>
+      <Button
+        title="Save Poem"
+        onPress={() => {
+          storeValue(
+            `${new Date().getFullYear()}-${
+              new Date().getMonth() < 10
+                ? "0" + (new Date().getMonth() + 1)
+                : new Date().getMonth() + 1
+            }-${
+              new Date().getDate() < 10
+                ? "0" + new Date().getDate()
+                : new Date().getDate()
+            }`,
+            poem
+          );
+          console.log(poem);
+        }}
+       color={"#fab387"}
+      />
     </View>
   );
 }

@@ -3,12 +3,8 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   Button,
   TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-  KeyboardAvoidingView,
 } from "react-native";
 import Dropdown from "./Dropdown";
 import PageMenu from "./PageMenu";
@@ -47,7 +43,8 @@ export default function TestPage({ route, navigation }) {
   let [fontsLoaded] = useFonts({
     Inconsolata_400Regular,
     Roboto_300Light,
-    Roboto_400Regular
+    Roboto_400Regular,
+    Lora_400Regular
   });
 
   if (!fontsLoaded) {
@@ -105,7 +102,7 @@ export default function TestPage({ route, navigation }) {
           }
         }}
       >
-        <Text style={{fontSize:19,borderColor:"#cdd6f4",borderWidth:1,padding:10,width:"80%",height:"60%",borderRadius:10,fontFamily:"Roboto_300Thin",color:"#cdd6f4"}}>{poem == "" ? "Write here" : poem}</Text>
+        <Text style={{fontSize:19,borderColor:"#cdd6f4",borderWidth:1,padding:10,width:"80%",height:"60%",borderRadius:10,fontFamily:"Roboto_300Light",color:"#cdd6f4"}}>{poem == "" ? "Start writing" : poem}</Text>
       </TouchableWithoutFeedback>
       <Button
         title="Save Poem"
